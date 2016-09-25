@@ -9,16 +9,23 @@ output:
 ## Loading and preprocessing the data
 ```{r}
 library(dplyr)
-setwd("/Users/abhishekdubey/abhishek-git-repos/datasciencecoursera/reproducible-research/RepData_PeerAssessment1")
+setwd(
+"/Users/abhishekdubey/abhishek-git-repos/datasciencecoursera/reproducible-research/RepData_PeerAssessment1"
+)
 activity <- read.csv(file = "activity.csv", header = TRUE, stringsAsFactors = FALSE, na.strings = "NA")
 activity$date <- as.POSIXct(strptime(with(activity, date), "%Y-%m-%d"))
-activitySummary <- select(activity, date, steps) %>% group_by(date) %>% summarize(totalSteps = sum(steps))
+
 ```
 
 ## What is mean total number of steps taken per day?
 ```{r}
+activitySummary <- select(activity, date, steps) %>% group_by(date) %>% summarize(totalSteps = sum(steps), mean = mean(steps), median = median(steps))
 hist(activitySummary$totalSteps, col = "red", xlab = "Total Steps", main = "Total Number of Steps Taken Per Day")
-activityMean <- str(activitySummary)$Mean
+```
+
+**Mean and Median of total number of steps taken per day**
+```{r}
+print(select(activitySummary, date, mean, median), n = nrow(activitySummary))
 ```
 
 
