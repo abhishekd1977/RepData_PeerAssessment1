@@ -9,17 +9,18 @@ output:
 ## Loading and preprocessing the data
 ```{r}
 library(dplyr)
+library(ggplot2)
 setwd(
 "/Users/abhishekdubey/abhishek-git-repos/datasciencecoursera/reproducible-research/RepData_PeerAssessment1"
 )
 activity <- read.csv(file = "activity.csv", header = TRUE, stringsAsFactors = FALSE, na.strings = "NA")
 activity$date <- as.POSIXct(strptime(with(activity, date), "%Y-%m-%d"))
-
+activityCompleteCases <- activity[complete.cases(activity),]
 ```
 
 ## What is mean total number of steps taken per day?
 ```{r}
-activitySummary <- select(activity, date, steps) %>% group_by(date) %>% summarize(totalSteps = sum(steps), mean = mean(steps), median = median(steps))
+activitySummary <- select(activityCompleteCases, date, steps) %>% group_by(date) %>% summarize(totalSteps = sum(steps), mean = mean(steps), median = median(steps))
 hist(activitySummary$totalSteps, col = "red", xlab = "Total Steps", main = "Total Number of Steps Taken Per Day")
 ```
 
@@ -30,8 +31,15 @@ print(select(activitySummary, date, mean, median), n = nrow(activitySummary))
 
 
 ## What is the average daily activity pattern?
+```{r}
+plot(activityCompleteCases$interval, activityCompleteCases$steps, type = "l", lwd = 2, xlab = "5-minute interval", ylab = "Average number of steps taken", main = "Time Series Plot")
+activity.maxSteps <- filter(activityCompleteCases, steps == max(steps))
+```
 
-
+```{r simulation, echo = FALSE}
+print("The 5-minute interval, on average across all the days in the dataset, which contains the maximum number of steps is as following: ")
+print(activity.maxSteps)
+```
 
 ## Imputing missing values
 
