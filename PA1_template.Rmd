@@ -26,7 +26,7 @@ hist(activitySummary$totalSteps, col = "red", xlab = "Total Steps", main = "Tota
 
 **Mean and Median of total number of steps taken per day**
 ```{r}
-print(select(activitySummary, date, mean, median), n = nrow(activitySummary))
+print(select(activitySummary, date, mean, median, totalSteps), n = nrow(activitySummary))
 ```
 
 
@@ -48,7 +48,7 @@ number.of.rows.with.missing.values <- sum(!complete.cases(activity))
 print(paste0("Total number of missing values in the dataset = ", number.of.rows.with.missing.values))
 ```
 
-#####We will be using "mean for that 5-minute interval" for imputing(filling-in) missing steps data. In below code, "activity.imputed.data" is the new dataset that is equal to the original dataset but with the missing data filled in.
+**We will be using "mean for that 5-minute interval" for imputing(filling-in) missing steps data. In below code, "activity.imputed.data" is the new dataset that is equal to the original dataset but with the missing data filled in.**
 ```{r}
 activitySummaryByInterval <- select(activityCompleteCases, interval, steps) %>% group_by(interval) %>% summarize(mean = mean(steps))
 
@@ -57,7 +57,22 @@ activity.not.missing.data.rows <- activity[which(!is.na(activity$steps)), ]
 activity.missing.data.rows$steps <- activitySummaryByInterval$mean[match(activitySummaryByInterval$interval, activity.missing.data.rows$interval, nomatch = 0)]
 
 activity.imputed.data <- arrange(rbind(activity.missing.data.rows,activity.not.missing.data.rows), date, interval)
+activity.summary.for.imputed.data <- select(activity.imputed.data, date, steps) %>% group_by(date) %>% summarize(totalSteps = sum(steps), mean = mean(steps), median = median(steps))
+hist(activity.summary.for.imputed.data$totalSteps, col = "red", xlab = "Total Steps", main = "Total Number of Steps Taken Per Day for Imputed (Filled-In) Data")
 ```
+
+**Mean and Median of total number of steps taken per day for Imputed (Filled-In) Data**
+```{r}
+print(select(activity.summary.for.imputed.data, date, mean, median, totalSteps), n = nrow(activity.summary.for.imputed.data))
+```
+
+**Observations-<br>**
+**1. For original data, we are able to calculate mean, median and total steps only for 53 days. Hoever, we are able to do same for all 61 days using imputed data.<br>**
+**2. For imputed data, the mean remains unchanged for all the 53 days, where we did not have missing data.<br>**
+**3. The median for the original data is zero for all days. This pattern has changed for imputed data. Please take a look at the median values for original vs imputed data.**
+
+
+
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
