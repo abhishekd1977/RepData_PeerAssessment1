@@ -42,7 +42,22 @@ print(activity.maxSteps)
 ```
 
 ## Imputing missing values
+```{r, echo = FALSE}
+number.of.rows.with.missing.values <- sum(!complete.cases(activity))
 
+print(paste0("Total number of missing values in the dataset = ", number.of.rows.with.missing.values))
+```
+
+#####We will be using "mean for that 5-minute interval" for imputing(filling-in) missing steps data. In below code, "activity.imputed.data" is the new dataset that is equal to the original dataset but with the missing data filled in.
+```{r}
+activitySummaryByInterval <- select(activityCompleteCases, interval, steps) %>% group_by(interval) %>% summarize(mean = mean(steps))
+
+activity.missing.data.rows <- activity[which(is.na(activity$steps)), ]
+activity.not.missing.data.rows <- activity[which(!is.na(activity$steps)), ]
+activity.missing.data.rows$steps <- activitySummaryByInterval$mean[match(activitySummaryByInterval$interval, activity.missing.data.rows$interval, nomatch = 0)]
+
+activity.imputed.data <- arrange(rbind(activity.missing.data.rows,activity.not.missing.data.rows), date, interval)
+```
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
