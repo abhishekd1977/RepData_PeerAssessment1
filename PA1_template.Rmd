@@ -80,8 +80,14 @@ activity.imputed.data$weekdayFactor <- factor((weekdays(activity.imputed.data$da
 
 activitySummaryByIntervalForImputedData <- select(activity.imputed.data, interval, steps, weekdayFactor) %>% group_by(interval, weekdayFactor) %>% summarize(mean = mean(steps))
 
-g <- ggplot(activitySummaryByIntervalForImputedData, aes(interval, mean, colour = as.factor(weekdayFactor)))
-g + geom_line(aes(group = weekdayFactor)) + labs(x = "Interval") + 
-        labs(y = "Average number of steps taken across all days") +
-        labs(title = "Time Series Plot for Imputed(Filled-In) Data")
+activitySummaryByIntervalForImputedData.weekday <- filter(activitySummaryByIntervalForImputedData, weekdayFactor == "weekday")
+
+activitySummaryByIntervalForImputedData.weekend <- filter(activitySummaryByIntervalForImputedData, weekdayFactor == "weekend")
+```
+
+```{r, echo = FALSE}
+plot(activitySummaryByIntervalForImputedData.weekday$interval, activitySummaryByIntervalForImputedData.weekday$mean, type = "l", lwd = 2, xlab = "5-minute interval", ylab = "Average number of steps taken across all days", main = "Time Series Plot for Weekday Imputed(Filled-In) Data")
+
+plot(activitySummaryByIntervalForImputedData.weekend$interval, activitySummaryByIntervalForImputedData.weekend$mean, type = "l", lwd = 2, xlab = "5-minute interval", ylab = "Average number of steps taken across all days", main = "Time Series Plot for Weekend Imputed(Filled-In) Data")
+
 ```
